@@ -1,10 +1,10 @@
-# WFL - Wells Fargo Login Page (Updated)
+# WFL - (Updated)
 
-A local copy of the Wells Fargo login page with modifications.
+A local copy of the WFL page with modifications.
 
 ## Features
 
-- Static Wells Fargo login interface
+- Static WFL interface
 - Disabled external link navigation (all links are prevented from redirecting away from this page)
 - Local hosting support
 
@@ -29,10 +29,10 @@ http://localhost:8000/WFL.html
 
 ## Notes
 
-- This is a static HTML archive and does not connect to actual Wells Fargo services
+- This is a static HTML archive and does not connect to actual WF services
 - All external navigation links are disabled to keep users on this page
 - External API calls and third-party resources may not load due to CORS restrictions
 
 ## License
 
-This is a demonstration/educational copy of the Wells Fargo login interface.
+This is a demonstration/educational copy of the WFL interface.
