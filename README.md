@@ -1,11 +1,38 @@
-# Northstar callback demo
+# WFL - (Updated)
 
-An original, static callback-request landing page for a fictional brand. It is not affiliated with any financial institution.
+A local copy of the WFL page with modifications.
 
-## Run locally
+## Features
 
-Open `index.html` in a browser, or serve this folder with any static file server.
+- Static WFL interface
+- Disabled external link navigation (all links are prevented from redirecting away from this page)
+- Local hosting support
 
-## Form behavior
+## Running Locally
 
-The callback dialog asks for name, phone number, email address, and consent to be contacted. Browser validation is enabled. Successful submission displays a confirmation message. This demo does not send or persist form entries; connect a secure, authorized backend before using it for real requests.
+To run this website locally, use Python's built-in HTTP server:
+
+```bash
+cd "F:\Web Apps\WFL - Updt"
+python -m http.server 8000
+```
+
+Then open your browser and navigate to:
+```
+http://localhost:8000/WFL.html
+```
+
+## Files
+
+- `WFL.html` - Main login page
+- `WFL_files/` - Supporting assets (CSS, JavaScript, images)
+
+## Notes
+
+- This is a static HTML archive and does not connect to actual WF services
+- All external navigation links are disabled to keep users on this page
+- External API calls and third-party resources may not load due to CORS restrictions
+
+## License
+
+This is a demonstration/educational copy of the WFL interface.
